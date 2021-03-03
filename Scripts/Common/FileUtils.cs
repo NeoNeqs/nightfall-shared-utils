@@ -19,7 +19,8 @@ namespace SharedUtils.Scripts.Common
             var file = new File();
             if (file.FileExists(pathToFile))
             {
-                file.Open(pathToFile, File.ModeFlags.Read);
+                var error = file.Open(pathToFile, File.ModeFlags.Read);
+                if (error != Error.Ok) return -1L;
                 var length = file.GetLen();
                 file.Close();
                 return length;
