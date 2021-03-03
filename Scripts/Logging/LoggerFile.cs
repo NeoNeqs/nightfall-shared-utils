@@ -41,6 +41,9 @@ namespace SharedUtils.Scripts.Logging
         /// Writes output to a file handle. Flushed the buffer when LoggerFile._writeCount is exceeded.
         public void Write(string output)
         {
+#if DEBUG
+            GD.Print(output);
+#endif
             _fileHandle.StoreLine(output);
 
             if (_writeCount++ >= MaxWriteCount)
@@ -75,7 +78,7 @@ namespace SharedUtils.Scripts.Logging
             var length = FileUtils.GetLength(fullFilePath);
 
             if (length == 0) return;
-            
+
             var date = GetCurrentLocalDateTimeFromUnixTime(_fileHandle.GetModifiedTime(fullFilePath));
 
             var newFileBaseName = GetLoggerFileFormat(date.Year, date.Month, date.Day);
