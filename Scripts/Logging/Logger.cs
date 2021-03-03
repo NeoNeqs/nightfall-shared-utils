@@ -2,7 +2,7 @@ using Godot;
 
 namespace SharedUtils.Scripts.Logging
 {
-    public class Logger : Node
+    public abstract class Logger : Node
     {
         // one instance of LoggerFile for every Logger instance
         protected static LoggerFile _loggerFile = new LoggerFile("user://logs/");
