@@ -5,11 +5,10 @@ namespace SharedUtils.Scripts.Services.Validators
 {
     public sealed class PathValidator : IValidable<string>
     {
-        public Error IsValid(string toValidate)
+        public ErrorCode IsValid(string toValidate)
         {
-            if (!(toValidate.IsAbsPath() || toValidate.IsRelPath())) return Error.FileBadPath;
-            if (!DirectoryUtils.DirExists(toValidate)) return Error.DoesNotExist;
-            return Error.Ok;
+            if (!(toValidate.IsAbsPath() || toValidate.IsRelPath())) return ErrorCode.DirBadPath;
+            return ErrorCode.Ok;
         }
     }
 }

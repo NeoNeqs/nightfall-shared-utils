@@ -19,13 +19,13 @@ namespace SharedUtils.Scripts.Services
             GetTree().NetworkPeer = _peer;
         }
 
-        protected virtual Error SetupDTLS(string path)
+        protected virtual ErrorCode SetupDTLS(string path)
         {
             _peer.DtlsVerify = false;
             _peer.UseDtls = true;
             if (!DirectoryUtils.DirExists(path))
-                return Error.FileBadPath;
-            return Error.Ok;
+                return ErrorCode.FileBadPath;
+            return ErrorCode.Ok;
         }
 
         protected abstract string GetCryptoKeyName();

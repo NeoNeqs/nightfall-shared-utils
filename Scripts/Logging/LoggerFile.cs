@@ -63,8 +63,8 @@ namespace SharedUtils.Scripts.Logging
         private void MakeDirs()
         {
             var isValid = new PathValidator().IsValid(path);
-            if (isValid != Error.Ok) return;
-            new Directory().MakeDirRecursive(path);
+            if (isValid != ErrorCode.Ok) return;
+            DirectoryUtils.MakeDirRecursive(path);
         }
 
         /// Makes sure that LoggerFile always writes to new empty file called LoggerFile.FileName.

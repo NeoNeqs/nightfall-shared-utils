@@ -1,7 +1,6 @@
 using Godot;
 
 using SharedUtils.Scripts.Common;
-using SharedUtils.Scripts.Logging;
 
 namespace SharedUtils.Scripts.Configurations
 {
@@ -19,13 +18,13 @@ namespace SharedUtils.Scripts.Configurations
             _configFile = new ConfigFile();
         }
 
-        protected Error LoadConfiguration()
+        protected ErrorCode LoadConfiguration()
         {
             DirectoryUtils.MakeDirRecursive(path);
             FileUtils.CreateFileIfNotExists(path);
             var error = _configFile.Load(path);
             _isLoaded = (error == Error.Ok);
-            return error;
+            return (ErrorCode)((int)error);
         }
 
         protected T GetValue<T>(string section, string key, T @default)
@@ -40,12 +39,12 @@ namespace SharedUtils.Scripts.Configurations
             _configFile.SetValue(section, key, value);
         }
 
-        protected Error SaveConfiguration()
+        protected ErrorCode SaveConfiguration()
         {
-            if (!_isLoaded) return Error.Failed;
+            if (!_isLoaded) return ErrorCode.CantSave;
             var error = _configFile.Save(path);
             _isLoaded = false;
-            return error;
+            return (ErrorCode)((int)error);
         }
     }
 }

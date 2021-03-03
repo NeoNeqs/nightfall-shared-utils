@@ -1,9 +1,9 @@
-using Godot;
+using SharedUtils.Scripts.Common;
 
 namespace SharedUtils.Scripts.Services.Validators
 {
     public interface IValidable<T>
     {
-        Error IsValid(T toValidate);
+        ErrorCode IsValid(T toValidate);
     }
 }
