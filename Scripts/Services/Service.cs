@@ -4,7 +4,7 @@ namespace SharedUtils.Scripts.Services
 {
     public class Service : Node
     {
-        public void QuitOnError(int errorCode)
+        public void QuitIfError(int errorCode)
         {
 #if DEBUG
             if (IsInsideTree())

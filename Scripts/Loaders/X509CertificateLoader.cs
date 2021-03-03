@@ -12,7 +12,7 @@ namespace SharedUtils.Scripts.Loaders
             var error = x509Certificate.Load(certificateFile);
             if (error != Error.Ok)
             {
-                Logger.Server.Error($"Could not load key file {ProjectSettings.GlobalizePath(certificateFile)}. Error code: {error}");
+                ServerLogger.GetLogger.Error($"Could not load key file {ProjectSettings.GlobalizePath(certificateFile)}. Error code: {error}");
             }
             outError = error;
             return x509Certificate;
