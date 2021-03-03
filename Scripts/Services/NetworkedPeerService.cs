@@ -1,11 +1,10 @@
 using Godot;
 
-using SharedUtils.Scripts.Logging;
 using SharedUtils.Scripts.Common;
 
 namespace SharedUtils.Scripts.Services
 {
-    public abstract class NetworkedPeerService : Service
+    public abstract class NetworkedPeerService : Node
     {
         protected readonly NetworkedMultiplayerENet _peer;
 
@@ -15,25 +14,21 @@ namespace SharedUtils.Scripts.Services
             _peer = new NetworkedMultiplayerENet();
         }
 
-        public override void _EnterTree()
-        {
-            SetupDTLS("user://DTLS/");
-        }
-
         protected virtual void Create()
         {
             GetTree().NetworkPeer = _peer;
         }
 
-        protected virtual void SetupDTLS(string path)
+        protected virtual Error SetupDTLS(string path)
         {
             _peer.DtlsVerify = false;
             _peer.UseDtls = true;
             if (!DirectoryUtils.DirExists(path))
-            {
-                Logger.Error($"Directory {ProjectSettings.GlobalizePath(path)} doesn't exist!. Abording");
-                QuitIfError((int)Error.FileBadPath);
-            }
+                return Error.FileBadPath;
+            return Error.Ok;
         }
+
+        protected abstract string GetCryptoKeyName();
+        protected abstract string GetCertificateName();
     }
 }

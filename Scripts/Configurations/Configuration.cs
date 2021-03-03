@@ -19,18 +19,13 @@ namespace SharedUtils.Scripts.Configurations
             _configFile = new ConfigFile();
         }
 
-        protected void LoadConfiguration()
+        protected Error LoadConfiguration()
         {
             DirectoryUtils.MakeDirRecursive(path);
             FileUtils.CreateFileIfNotExists(path);
             var error = _configFile.Load(path);
-            if (error != Error.Ok)
-            {
-                _isLoaded = false;
-                Logger.Error($"Could not load configuration file {ProjectSettings.GlobalizePath(path)}. Error code: {error}");
-                return;
-            }
-            _isLoaded = true;
+            _isLoaded = (error == Error.Ok);
+            return error;
         }
 
         protected T GetValue<T>(string section, string key, T @default)
@@ -45,14 +40,12 @@ namespace SharedUtils.Scripts.Configurations
             _configFile.SetValue(section, key, value);
         }
 
-        protected void SaveConfiguration()
+        protected Error SaveConfiguration()
         {
-            if (!_isLoaded) return;
+            if (!_isLoaded) return Error.Failed;
             var error = _configFile.Save(path);
-            if (error != Error.Ok)
-            {
-                Logger.Error($"Could not save configuration file {ProjectSettings.GlobalizePath(path)}. Error code: {error}");
-            }
+            _isLoaded = false;
+            return error;
         }
     }
 }
