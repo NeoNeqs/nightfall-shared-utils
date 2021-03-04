@@ -18,7 +18,6 @@ namespace SharedUtils.Scripts.Services
         {
             SetupDTLS("user://DTLS/");
         }
-
         protected virtual void Create()
         {
             GetTree().NetworkPeer = _peer;
@@ -34,7 +33,6 @@ namespace SharedUtils.Scripts.Services
 
         protected abstract string GetCryptoKeyName();
         protected abstract string GetCertificateName();
-
         protected abstract void ConnectSignals(NetworkedPeerService to);
     }
 }
