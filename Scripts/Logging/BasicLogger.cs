@@ -2,7 +2,7 @@ using Godot;
 
 namespace SharedUtils.Scripts.Logging
 {
-    public sealed class BasicLogger
+    public abstract class BasicLogger
     {
         enum Level
         {
@@ -15,12 +15,10 @@ namespace SharedUtils.Scripts.Logging
         }
 
         private Level _currentLevel;
-        private readonly LoggerFile _loggerFile;
-        private readonly string _moduleName;
-        
-        public BasicLogger(ref LoggerFile loggerFile, string moduleName)
+        private string _moduleName;
+
+        public BasicLogger(string moduleName)
         {
-            _loggerFile = loggerFile;
             _currentLevel = Level.Verbose;
             _moduleName = moduleName;
         }
@@ -30,7 +28,7 @@ namespace SharedUtils.Scripts.Logging
         private void Put(Level level, string output)
         {
             if (level < _currentLevel) return;
-            _loggerFile.Write($"[{_moduleName}][{GetTime()} {level.ToString("g").ToUpper()}]: {output}");
+            GD.Print($"[{_moduleName}][{GetTime()} {level.ToString("g").ToUpper()}]: {output}");
         }
 
         public void Verbose(string output)
