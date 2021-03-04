@@ -14,21 +14,27 @@ namespace SharedUtils.Scripts.Services
             _peer = new NetworkedMultiplayerENet();
         }
 
+        public override void _EnterTree()
+        {
+            SetupDTLS("user://DTLS/");
+        }
+
         protected virtual void Create()
         {
             GetTree().NetworkPeer = _peer;
         }
 
-        protected virtual ErrorCode SetupDTLS(string path)
+        protected virtual void SetupDTLS(string path)
         {
             _peer.DtlsVerify = false;
             _peer.UseDtls = true;
             if (!DirectoryUtils.DirExists(path))
-                return ErrorCode.FileBadPath;
-            return ErrorCode.Ok;
+                throw new System.IO.DirectoryNotFoundException($"Directory {path} does not exist");
         }
 
         protected abstract string GetCryptoKeyName();
         protected abstract string GetCertificateName();
+
+        protected abstract void ConnectSignals(NetworkedPeerService to);
     }
 }
