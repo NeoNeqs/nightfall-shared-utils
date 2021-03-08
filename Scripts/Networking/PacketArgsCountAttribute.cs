@@ -1,6 +1,6 @@
 using System;
 
-namespace SharedUtils.Scripts.Networking
+namespace SharedUtils.Networking
 {
     public class PacketArgsCountAttribute : Attribute
     {
