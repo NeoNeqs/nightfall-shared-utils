@@ -1,7 +1,7 @@
 using Godot;
-using SharedUtils.Scripts.Common;
+using SharedUtils.Common;
 
-namespace SharedUtils.Scripts.Services.Validators
+namespace SharedUtils.Services.Validators
 {
     public sealed class PathValidator : IValidable<string>
     {

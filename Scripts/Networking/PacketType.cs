@@ -1,4 +1,4 @@
-namespace SharedUtils.Scripts.Networking
+namespace SharedUtils.Networking
 {
     public enum PacketType
     {

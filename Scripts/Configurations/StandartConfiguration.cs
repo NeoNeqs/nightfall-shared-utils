@@ -1,4 +1,4 @@
-namespace SharedUtils.Scripts.Configurations
+namespace SharedUtils.Configurations
 {
     public abstract class StandartConfiguration : Configuration
     {

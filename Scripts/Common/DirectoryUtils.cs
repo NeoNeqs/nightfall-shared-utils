@@ -1,6 +1,6 @@
 using Godot;
 
-namespace SharedUtils.Scripts.Common
+namespace SharedUtils.Common
 {
     public sealed class DirectoryUtils
     {

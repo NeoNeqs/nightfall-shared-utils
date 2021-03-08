@@ -1,9 +1,9 @@
 using Godot;
 
-using SharedUtils.Scripts.Common;
-using SharedUtils.Scripts.Exceptions;
+using SharedUtils.Common;
+using SharedUtils.Exceptions;
 
-namespace SharedUtils.Scripts.Services
+namespace SharedUtils.Services
 {
     public abstract class NetworkedPeer : Node
     {
