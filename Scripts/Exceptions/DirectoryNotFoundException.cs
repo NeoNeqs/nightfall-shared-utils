@@ -1,4 +1,4 @@
-namespace SharedUtils.Scripts.Exceptions
+namespace SharedUtils.Exceptions
 {
     public class DirectoryNotFoundException : NightFallException
     {

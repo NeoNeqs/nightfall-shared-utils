@@ -1,6 +1,6 @@
 using System;
 
-namespace SharedUtils.Scripts.Common
+namespace SharedUtils.Common
 {
     public static class EnumHelper
     {
@@ -9,7 +9,7 @@ namespace SharedUtils.Scripts.Common
             var type = enumVal.GetType();
             var memInfo = type.GetMember(enumVal.ToString());
             var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
-            return (attributes.Length > 0) ? (T)attributes[0] : null;
+            return (attributes.Length > 0) ? attributes[0] as T : null;
         }
     }
 }

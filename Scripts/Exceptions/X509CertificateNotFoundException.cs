@@ -1,6 +1,6 @@
-using SharedUtils.Scripts.Exceptions;
+using SharedUtils.Exceptions;
 
-namespace SharedUtils.Scripts.Exceptions
+namespace SharedUtils.Exceptions
 {
     public class X509CertificateNotFoundException : NightFallException
     {

@@ -1,8 +1,8 @@
 using Godot;
 
-using SharedUtils.Scripts.Common;
+using SharedUtils.Common;
 
-namespace SharedUtils.Scripts.Configurations
+namespace SharedUtils.Configurations
 {
     public abstract class Configuration : Node
     {

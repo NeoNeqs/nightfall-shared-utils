@@ -1,8 +1,8 @@
 using Godot;
 
-using SharedUtils.Scripts.Common;
+using SharedUtils.Common;
 
-namespace SharedUtils.Scripts.Loaders
+namespace SharedUtils.Loaders
 {
     public sealed class X509CertificateLoader
     {
