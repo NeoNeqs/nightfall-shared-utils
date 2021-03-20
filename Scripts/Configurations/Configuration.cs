@@ -7,7 +7,7 @@ namespace SharedUtils.Configurations
     public abstract class Configuration : Node
     {
         private readonly ConfigFile _configFile;
-        private string path = "user://config/config.ini";
+        private readonly string path = "user://config/config.ini";
 
         protected string Path { set; get; }
         private bool _isLoaded;

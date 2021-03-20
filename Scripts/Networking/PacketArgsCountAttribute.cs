@@ -2,13 +2,14 @@ using System;
 
 namespace SharedUtils.Networking
 {
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public class PacketArgsCountAttribute : Attribute
     {
-        public uint PacketCount { get; set; }
+        public uint PacketArgsCount { get; set; }
 
-        public PacketArgsCountAttribute(uint packetCount) : base()
+        public PacketArgsCountAttribute(uint packetArgsCount) : base()
         {
-            PacketCount = packetCount;
+            PacketArgsCount = packetArgsCount;
         }
     }
 }
