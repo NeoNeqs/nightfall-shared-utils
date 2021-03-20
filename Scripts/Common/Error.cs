@@ -56,5 +56,6 @@ namespace SharedUtils.Common
         CantSave = 49,
         EnvironmentVariableNotSet = 50,
         DirBadPath = 51,
+        DataTooLong = 52,
     }
 }

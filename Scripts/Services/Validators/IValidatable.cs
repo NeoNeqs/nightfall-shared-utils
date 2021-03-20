@@ -2,7 +2,7 @@ using SharedUtils.Common;
 
 namespace SharedUtils.Services.Validators
 {
-    public interface IValidable<T>
+    public interface IValidatable<T>
     {
         ErrorCode IsValid(T toValidate);
     }

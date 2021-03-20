@@ -22,9 +22,11 @@ namespace SharedUtils.Services
 
         protected virtual void Create()
         {
-            CustomMultiplayer = new MultiplayerAPI();
-            CustomMultiplayer.NetworkPeer = _peer;
-            CustomMultiplayer.RootNode = this;
+            CustomMultiplayer = new MultiplayerAPI
+            {
+                NetworkPeer = _peer,
+                RootNode = this
+            };
         }
 
         protected void SetupDTLS(string path)

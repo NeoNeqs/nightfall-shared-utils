@@ -3,7 +3,7 @@ using SharedUtils.Common;
 
 namespace SharedUtils.Services.Validators
 {
-    public sealed class PathValidator : IValidable<string>
+    public sealed class PathValidator : IValidatable<string>
     {
         public ErrorCode IsValid(string toValidate)
         {

@@ -7,7 +7,7 @@ namespace SharedUtils.Exceptions
     {
         public NightFallException(string message) : base(message)
         { 
-            GD.LogError(message);
+            //GD.LogError(message);
         }
     }
 }
