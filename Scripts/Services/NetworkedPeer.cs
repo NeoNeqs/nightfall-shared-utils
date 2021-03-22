@@ -32,15 +32,15 @@ namespace SharedUtils.Services
         }
 
         [Remote]
-        protected void OnPeerPacket(PacketType packetType, object arg1) => PeerPacket(packetType, arg1);
+        protected void PacketReceived(PacketType packetType, object arg1) => OnPacketReceived(packetType, arg1);
         [Remote]
-        protected void OnPeerPacket(PacketType packetType, object arg1, object arg2) => PeerPacket(packetType, arg1, arg2);
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2) => OnPacketReceived(packetType, arg1, arg2);
         [Remote]
-        protected void OnPeerPacket(PacketType packetType, object arg1, object arg2, object arg3) => PeerPacket(packetType, arg1, arg2, arg3);
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3) => OnPacketReceived(packetType, arg1, arg2, arg3);
         [Remote]
-        protected void OnPeerPacket(PacketType packetType, object arg1, object arg2, object arg3, object arg4) => PeerPacket(packetType, arg1, arg2, arg3, arg4);
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4) => OnPacketReceived(packetType, arg1, arg2, arg3, arg4);
         [Remote]
-        protected void OnPeerPacket(PacketType packetType, object arg1, object arg2, object arg3, object arg4, object arg5) => PeerPacket(packetType, arg1, arg2, arg3, arg4, arg5);
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4, object arg5) => OnPacketReceived(packetType, arg1, arg2, arg3, arg4, arg5);
 
         protected virtual void Create()
         {
@@ -74,24 +74,10 @@ namespace SharedUtils.Services
         /// </summary>
         protected virtual void Send(int peerId, params object[] args)
         {
-            RpcId(peerId, nameof(OnPeerPacket), args);
+            RpcId(peerId, nameof(PacketReceived), args);
         }
 
-        protected bool ValidateArgCount(PacketType packetType, int toValidate)
-        {
-            uint? expectedArgsCount = EnumHelper.GetAttributeOrNullOfType<PacketArgsCountAttribute>(packetType)?.PacketArgsCount;
-#if DEBUG
-            if (expectedArgsCount == null)
-            {
-                return false;
-            }
-#endif
-            if (toValidate != expectedArgsCount) return false;
-
-            return true;
-        }
-
-        protected abstract void PeerPacket(PacketType packetType, params object[] args);
+        protected abstract void OnPacketReceived(PacketType packetType, params object[] args);
         protected abstract string GetCertificateName();
         protected abstract void ConnectSignals();
     }

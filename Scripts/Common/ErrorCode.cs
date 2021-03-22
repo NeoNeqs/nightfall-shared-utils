@@ -57,5 +57,7 @@ namespace SharedUtils.Common
         EnvironmentVariableNotSet = 50,
         DirBadPath = 51,
         DataTooLong = 52,
+        MissingAttribute = 53,
+        NotValid = 54,
     }
 }
