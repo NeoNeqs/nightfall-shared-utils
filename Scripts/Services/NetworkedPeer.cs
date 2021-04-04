@@ -4,6 +4,7 @@ using SharedUtils.Common;
 using SharedUtils.Exceptions;
 using SharedUtils.Loaders;
 using SharedUtils.Networking;
+using SharedUtils.Services.Validators;
 
 namespace SharedUtils.Services
 {
@@ -24,7 +25,10 @@ namespace SharedUtils.Services
             _peer = new NetworkedMultiplayerENet();
         }
 
-        public override void _Ready() => ConnectSignals();
+        public override void _Ready()
+        {
+            ConnectSignals();
+        }
         
         public override void _Process(float delta)
         {
@@ -32,23 +36,42 @@ namespace SharedUtils.Services
         }
 
         [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1) => OnPacketReceived(packetType, arg1);
+        protected void PacketReceived(PacketType packetType, object arg1)
+        {
+            OnPacketReceived(packetType, arg1);
+        }
+
         [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2) => OnPacketReceived(packetType, arg1, arg2);
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2)
+        {
+            OnPacketReceived(packetType, arg1, arg2);
+        }
+
         [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3) => OnPacketReceived(packetType, arg1, arg2, arg3);
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3)
+        {
+            OnPacketReceived(packetType, arg1, arg2, arg3);
+        }
+
         [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4) => OnPacketReceived(packetType, arg1, arg2, arg3, arg4);
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4)
+        {
+            OnPacketReceived(packetType, arg1, arg2, arg3, arg4);
+        }
+
         [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4, object arg5) => OnPacketReceived(packetType, arg1, arg2, arg3, arg4, arg5);
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4, object arg5)
+        {
+            OnPacketReceived(packetType, arg1, arg2, arg3, arg4, arg5);
+        }
 
         protected virtual void Create()
         {
             CustomMultiplayer = new MultiplayerAPI
             {
                 NetworkPeer = _peer,
-                RootNode = this
             };
+            CustomMultiplayer.SetRootNode(this);
         }
 
         protected virtual string SetupDTLS()
@@ -59,12 +82,18 @@ namespace SharedUtils.Services
             _peer.UseDtls = true;
 
             // It's ok to throw here because DTLS is requried for network to work.
-            if (!DirectoryUtils.DirExists(path)) throw new DirectoryNotFoundException($"Directory {path} does not exist");
+            if (!DirectoryUtils.DirExists(path))
+            {
+                throw new DirectoryNotFoundException(path);
+            }
 
             _peer.SetDtlsCertificate(X509CertificateLoader.Load(path, GetCertificateName(), out ErrorCode error));
 
             // Again, it's ok to throw here.
-            if (error != ErrorCode.Ok) throw new X509CertificateNotFoundException($"Failed to load x509 certificate from '{path.PlusFile(GetCertificateName())}'");
+            if (error != ErrorCode.Ok)
+            {
+                throw new X509CertificateNotFoundException($"Failed to load x509 certificate from '{path.PlusFile(GetCertificateName())}'");
+            }
 
             return path;
         }
@@ -74,7 +103,13 @@ namespace SharedUtils.Services
         /// </summary>
         protected virtual void Send(int peerId, params object[] args)
         {
-            RpcId(peerId, nameof(PacketReceived), args);
+            _ = RpcId(peerId, nameof(PacketReceived), args);
+        }
+
+        protected bool IsArgsCountCorrect(PacketType packetType, int length)
+        {
+            PacketArgsCountValidator packetArgsCountValidator = new PacketArgsCountValidator();
+            return packetArgsCountValidator.Validate(packetType, length) == ErrorCode.Ok;
         }
 
         protected abstract void OnPacketReceived(PacketType packetType, params object[] args);

@@ -5,7 +5,7 @@ namespace SharedUtils.Common
 {
     public static class EnumHelper
     {
-        public static T GetAttributeOrNullOfType<T>(this Enum enumVal) where T : Attribute
+        public static T GetFirstAttributeOrNullOfType<T>(this Enum enumVal) where T : Attribute
         {
             Type type = enumVal.GetType();
             MemberInfo[] memInfo = type.GetMember(enumVal.ToString());
