@@ -7,7 +7,7 @@ namespace SharedUtils.Services.Validators
     {
         public ErrorCode Validate(PacketType packetType, int toValidate)
         {
-            uint? expectedArgsCount = EnumHelper.GetAttributeOrNullOfType<PacketArgsCountAttribute>(packetType)?.PacketArgsCount;
+            uint? expectedArgsCount = EnumHelper.GetFirstAttributeOrNullOfType<PacketArgsCountAttribute>(packetType)?.PacketArgsCount;
 
             if (expectedArgsCount == null) return ErrorCode.MissingAttribute;
             if (toValidate != expectedArgsCount) return ErrorCode.NotValid;
