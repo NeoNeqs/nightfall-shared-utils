@@ -47,8 +47,8 @@ namespace SharedUtils.Services
             CustomMultiplayer = new MultiplayerAPI
             {
                 NetworkPeer = _peer,
-                RootNode = this
             };
+            CustomMultiplayer.SetRootNode(this);
         }
 
         protected virtual string SetupDTLS()
