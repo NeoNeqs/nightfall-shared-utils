@@ -21,7 +21,7 @@ namespace SharedUtils.Common
             {
                 var error = file.Open(pathToFile, File.ModeFlags.Read);
                 if (error != Error.Ok) return -1L;
-                var length = file.GetLen();
+                long length = file.GetLen();
                 file.Close();
                 return length;
             }
