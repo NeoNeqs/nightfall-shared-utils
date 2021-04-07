@@ -2,6 +2,6 @@
 {
     public class NodeNotFoundException : NightFallException
     {
-        public NodeNotFoundException(string message) : base($@"Could not found node at ""{message}""") { }
+        public NodeNotFoundException(string message) : base($"Could not find node at '{message}'") { }
     }
 }

@@ -1,6 +1,8 @@
+using Godot;
+
 namespace SharedUtils.Configurations
 {
-    public abstract class StandartConfiguration : Configuration
+    public abstract class StandartConfiguration<T> : Configuration<T> where T : Node
     {
         protected StandartConfiguration() : base()
         {

@@ -18,8 +18,7 @@ namespace SharedUtils.Services
         /// <summary>
         ///     Returns id of last rpc sender.
         /// </summary>
-        protected int RpcSenderId => CustomMultiplayer.GetRpcSenderId();
-
+        
         protected NetworkedPeer()
         {
             _peer = new NetworkedMultiplayerENet();
@@ -92,7 +91,7 @@ namespace SharedUtils.Services
             // Again, it's ok to throw here.
             if (error != ErrorCode.Ok)
             {
-                throw new X509CertificateNotFoundException($"Failed to load x509 certificate from '{path.PlusFile(GetCertificateName())}'");
+                throw new X509CertificateNotFoundException(path.PlusFile(GetCertificateName()));
             }
 
             return path;

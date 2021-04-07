@@ -12,5 +12,6 @@ namespace SharedUtils.Common
             object[] attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
             return (attributes.Length > 0) ? attributes[0] as T : null;
         }
+
     }
 }

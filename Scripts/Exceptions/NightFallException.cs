@@ -1,4 +1,5 @@
 using Godot;
+using SharedUtils.Logging;
 using System;
 
 namespace SharedUtils.Exceptions
@@ -6,8 +7,7 @@ namespace SharedUtils.Exceptions
     public class NightFallException : Exception
     {
         public NightFallException(string message) : base(message)
-        { 
-            //GD.LogError(message);
+        {
         }
     }
 }

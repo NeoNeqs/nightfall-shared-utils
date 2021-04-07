@@ -4,7 +4,7 @@ using SharedUtils.Common;
 
 namespace SharedUtils.Configurations
 {
-    public abstract class Configuration : Node
+    public abstract class Configuration<T> : GodotSingleton<T> where T : Node
     {
         private readonly ConfigFile _configFile;
         private readonly string path = "user://config/config.ini";
@@ -28,12 +28,12 @@ namespace SharedUtils.Configurations
             return (ErrorCode)(int)error;
         }
 
-        protected T GetValue<T>(string section, string key, T @default)
+        protected V GetValue<V>(string section, string key, V @default)
         {
-            return !_isLoaded ? @default : (T)_configFile.GetValue(section, key, @default);
+            return !_isLoaded ? @default : (V)_configFile.GetValue(section, key, @default);
         }
 
-        protected void SetValue<T>(string section, string key, T value)
+        protected void SetValue<R>(string section, string key, R value)
         {
             if (!_isLoaded)
             {

@@ -3,25 +3,28 @@ namespace SharedUtils.Networking
     public enum PacketType
     {
         [PacketArgsCount(1u)]
-        GatewayServerAuth = 1,
+        GatewayTokenVerification,
 
         [PacketArgsCount(1u)]
-        GameWorldServerAuth = 2,
-
-        [PacketArgsCount(2u)]
-        ClientPartialAuth = 3,
-
-        [PacketArgsCount(3u)]
-        GatewayServerAuthForward = 4,
-
-        [PacketArgsCount(3u)]
-        AuthenticationServerAuthResponse = 5,
+        GameWorldTokenVerification,
 
         [PacketArgsCount(1u)]
-        AuthenticationServerSendToken = 6,
+        TokenVerificationResponse,
 
         [PacketArgsCount(2u)]
-        GatewayServerAuthResponse = 7,
+        ClientPartialAuth,
+
+        [PacketArgsCount(3u)]
+        ForwardedClientVerification,
+
+        [PacketArgsCount(3u)]
+        ForwardedClientVerificationResponse,
+
+        [PacketArgsCount(1u)]
+        ForwardedClientVerificationToken,
+
+        [PacketArgsCount(2u)]
+        GatewayServerAuthResponse,
 
     }
 }

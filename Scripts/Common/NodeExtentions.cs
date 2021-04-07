@@ -16,5 +16,17 @@ namespace SharedUtils.Common
 #endif
             return (T)node;
         }
+
+        public static Node GetNodeD(this Node instance, NodePath path)
+        {
+            Node node = instance.GetNodeOrNull(path);
+#if DEBUG
+            if (node == null)
+            {
+                throw new NodeNotFoundException(path);
+            }
+#endif
+            return node;
+        }
     }
 }
