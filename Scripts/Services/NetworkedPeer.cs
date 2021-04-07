@@ -98,6 +98,16 @@ namespace SharedUtils.Services
             return path;
         }
 
+        protected void CloseConnection()
+        {
+            _peer.CloseConnection();
+        }
+
+        protected NetworkedMultiplayerPeer.ConnectionStatus GetConnectionStatus()
+        {
+            return _peer.GetConnectionStatus();
+        }
+
         /// <summary>
         ///     Sends args to peerId. Actually calls OnPeerPacket method remotely on peerId.
         /// </summary>
