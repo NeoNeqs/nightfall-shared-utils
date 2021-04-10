@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 using Godot;
 using Godot.Collections;
 
 using SharedUtils.Common;
-
 using File = Godot.File;
 
 namespace SharedUtils.Logging
 {
     public sealed class Logger
     {
-        public static Logger Instance { get; } = new Logger();
+        private static readonly Logger instance = new Logger();
+        public static Logger Instance => instance;
 
         private static Buffer buffer;
         public static string Path { get; set; }
         public static Level CurrentLevel { get; set; }
 
         static Logger() { }
-
         private Logger() 
         {
             string path = "user://logs/";
@@ -37,39 +38,39 @@ namespace SharedUtils.Logging
         }
 
         [Conditional("DEBUG")]
-        public static void Debug(string message)
+        public void Debug(string message)
         {
             Store(Level.Debug, message);
         }
 
-        public static void Info(string message)
+        public void Info(string message)
         {
             Store(Level.Info, message);
         }
 
-        public static void Warn(string message)
+        public void Warn(string message)
         {
             Store(Level.Warn, message);
         }
 
-        public static void Error(string message)
+        public void Error(string message)
         {
             Store(Level.Error, message);
         }
 
-        public static void Error(Exception e)
+        public void Error(Exception e)
         {
             Error(e.Message);
             Error(e.StackTrace);
         }
 
-        private static void Store(Level level, string message)
+        private async void Store(Level level, string message)
         {
             if (CurrentLevel > level) return;
 
             if (buffer.Overflows())
             {
-                FlushAsync();
+                await FlushAsync();
             }
             string line = ConstructPrefix(level) + message;
 #if DEBUG
@@ -79,52 +80,34 @@ namespace SharedUtils.Logging
             
         }
 
-        private static string ConstructFileName()
+        private string ConstructFileName()
         {
             Dictionary date = OS.GetDate();
             return $"nf_{date["year"]}-{date["month"]:00}-{date["day"]:00}.log";
         }
 
-        private static string ConstructPrefix(Level level)
+        private string ConstructPrefix(Level level)
         {
             Dictionary time = OS.GetTime();
             return $"[{time["hour"]:00}:{time["minute"]:00}:{time["second"]:00} {level}]: ";
         }
 
-        public static async void FlushAsync()
-        {
-            try
-            {
-                await Task.Run(() => Flush());
-            } 
-            catch (Exception e)
-            {
-                GD.PrintErr("General Exception was thrown: ");
-                GD.PrintErr(e.Message);
-                GD.PrintErr(e.StackTrace);
-            }
-        }
-
-        private static void Flush()
+        private async Task FlushAsync()
         {
             string fullName = Path.PlusFile(ConstructFileName());
 
-            File f = new File();
-            f.Open(fullName, f.FileExists(fullName) ? File.ModeFlags.ReadWrite : File.ModeFlags.Write);
-            f.SeekEnd();
+            using FileStream fs = new FileStream(fullName, FileMode.Append, FileAccess.Write, FileShare.None, 4096, true);
 
             for (int i = 0; i < buffer.position; i++)
             {
-                f.StoreLine(buffer[i]);
+                byte[] bytes = Encoding.UTF8.GetBytes(buffer[i]);
+                await fs.WriteAsync(bytes, 0, bytes.Length);
             }
-
-            f.Close();
         }
 
         ~Logger()
         {
-            Flush();
+            _ = Task.Run(async () => await FlushAsync());
         }
-
     }
 }
