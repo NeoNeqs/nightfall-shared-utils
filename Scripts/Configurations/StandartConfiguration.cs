@@ -10,7 +10,12 @@ namespace SharedUtils.Configurations
 
         public int GetPort(int defaultPort)
         {
-            return GetValue<int>("NETWORKING", "port", defaultPort);
+            return GetValue("NETWORKING", "port", defaultPort);
+        }
+
+        public int GetMaxAttempts(int defaultAttemps)
+        {
+            return GetValue("NETWORKING", "max_attempts", defaultAttemps);
         }
     }
 }
