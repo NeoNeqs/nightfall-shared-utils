@@ -14,8 +14,7 @@ namespace SharedUtils.Logging
 {
     public sealed class Logger
     {
-        private static readonly Logger instance = new Logger();
-        public static Logger Instance => instance;
+        private static Logger Instance { get; } = new Logger();
 
         private static Buffer buffer;
         public static string Path { get; set; }
@@ -38,33 +37,33 @@ namespace SharedUtils.Logging
         }
 
         [Conditional("DEBUG")]
-        public void Debug(string message)
+        public static void Debug(string message)
         {
             Store(Level.Debug, message);
         }
 
-        public void Info(string message)
+        public static void Info(string message)
         {
             Store(Level.Info, message);
         }
 
-        public void Warn(string message)
+        public static void Warn(string message)
         {
             Store(Level.Warn, message);
         }
 
-        public void Error(string message)
+        public static void Error(string message)
         {
             Store(Level.Error, message);
         }
 
-        public void Error(Exception e)
+        public static void Error(Exception e)
         {
             Error(e.Message);
             Error(e.StackTrace);
         }
 
-        private async void Store(Level level, string message)
+        private static async void Store(Level level, string message)
         {
             if (CurrentLevel > level) return;
 
@@ -80,19 +79,19 @@ namespace SharedUtils.Logging
             
         }
 
-        private string ConstructFileName()
+        private static string ConstructFileName()
         {
             Dictionary date = OS.GetDate();
             return $"nf_{date["year"]}-{date["month"]:00}-{date["day"]:00}.log";
         }
 
-        private string ConstructPrefix(Level level)
+        private static string ConstructPrefix(Level level)
         {
             Dictionary time = OS.GetTime();
             return $"[{time["hour"]:00}:{time["minute"]:00}:{time["second"]:00} {level}]: ";
         }
 
-        private async Task FlushAsync()
+        private static async Task FlushAsync()
         {
             string fullName = Path.PlusFile(ConstructFileName());
 

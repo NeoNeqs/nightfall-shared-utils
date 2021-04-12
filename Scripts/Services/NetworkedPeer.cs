@@ -1,10 +1,15 @@
 using Godot;
 
+using GatewayServer.AutoLoad;
+
 using SharedUtils.Common;
 using SharedUtils.Exceptions;
 using SharedUtils.Loaders;
 using SharedUtils.Networking;
 using SharedUtils.Services.Validators;
+
+using ConnectionStatus = Godot.NetworkedMultiplayerPeer.ConnectionStatus;
+using SharedUtils.Logging;
 
 namespace SharedUtils.Services
 {
@@ -13,72 +18,72 @@ namespace SharedUtils.Services
     /// </summary>
     public abstract class NetworkedPeer<T> : GodotSingleton<T> where T : Node
     {
-        protected readonly NetworkedMultiplayerENet _peer;
+        protected NetworkedMultiplayerENet _peer;
 
-        /// <summary>
-        ///     Returns id of last rpc sender.
-        /// </summary>
-        
-        protected NetworkedPeer()
+        private int attempts;
+
+        private int maxAttempts;
+
+        public NetworkedPeer()
         {
-            _peer = new NetworkedMultiplayerENet();
+            attempts = 0;
         }
 
-        public override void _Ready()
+        public override void _EnterTree()
         {
-            ConnectSignals();
+            maxAttempts = ClientConfiguration.Singleton.GetMaxAttempts(GlobalDefines.MaxAttemptsDefault);
+
+            CreateInternal();
         }
-        
+
         public override void _Process(float delta)
         {
             CustomMultiplayer.Poll();
         }
 
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1)
+        private void CreateInternal()
         {
-            OnPacketReceived(packetType, arg1);
-        }
+            _peer = new NetworkedMultiplayerENet
+            {
+                DtlsVerify = false,
+                UseDtls = true
+            };
 
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2)
-        {
-            OnPacketReceived(packetType, arg1, arg2);
-        }
+            _ = SetupDTLS();
 
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3)
-        {
-            OnPacketReceived(packetType, arg1, arg2, arg3);
-        }
+            Create();
 
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4)
-        {
-            OnPacketReceived(packetType, arg1, arg2, arg3, arg4);
-        }
-
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4, object arg5)
-        {
-            OnPacketReceived(packetType, arg1, arg2, arg3, arg4, arg5);
-        }
-
-        protected virtual void Create()
-        {
             CustomMultiplayer = new MultiplayerAPI
             {
-                NetworkPeer = _peer,
+                NetworkPeer = _peer
             };
+
             CustomMultiplayer.SetRootNode(this);
+
+            ConnectSignals();
+        }
+
+        protected void Reconnect()
+        {
+            if (attempts > maxAttempts)
+            {
+                Logger.Warn($"The number of attempts to reconnect exceeded {maxAttempts}");
+                return;
+            }
+
+            if (GetConnectionStatus() == ConnectionStatus.Connected)
+            {
+                CloseConnection();
+            }
+
+            CreateInternal();
+            Logger.Info($"Reconnect attempt #{attempts}");
+            attempts++;
         }
 
         protected virtual string SetupDTLS()
         {
             string path = "user://DTLS/";
-
-            _peer.DtlsVerify = false;
-            _peer.UseDtls = true;
 
             // It's ok to throw here because DTLS is requried for network to work.
             if (!DirectoryUtils.DirExists(path))
@@ -102,17 +107,9 @@ namespace SharedUtils.Services
             _peer.CloseConnection();
         }
 
-        protected NetworkedMultiplayerPeer.ConnectionStatus GetConnectionStatus()
+        protected ConnectionStatus GetConnectionStatus()
         {
             return _peer.GetConnectionStatus();
-        }
-
-        /// <summary>
-        ///     Sends args to peerId. Actually calls OnPeerPacket method remotely on peerId.
-        /// </summary>
-        protected virtual void Send(int peerId, params object[] args)
-        {
-            _ = RpcId(peerId, nameof(PacketReceived), args);
         }
 
         protected bool IsArgsCountCorrect(PacketType packetType, int length)
@@ -121,8 +118,51 @@ namespace SharedUtils.Services
             return packetArgsCountValidator.Validate(packetType, length) == ErrorCode.Ok;
         }
 
+        [Remote]
+        protected void PacketReceived(PacketType packetType, object arg1)
+        {
+            OnPacketReceivedInternal(packetType, arg1);
+        }
+
+        [Remote]
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2)
+        {
+            OnPacketReceivedInternal(packetType, arg1, arg2);
+        }
+
+        [Remote]
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3)
+        {
+            OnPacketReceivedInternal(packetType, arg1, arg2, arg3);
+        }
+
+        [Remote]
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4)
+        {
+            OnPacketReceivedInternal(packetType, arg1, arg2, arg3, arg4);
+        }
+
+        [Remote]
+        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4, object arg5)
+        {
+            OnPacketReceivedInternal(packetType, arg1, arg2, arg3, arg4, arg5);
+        }
+
+        private void OnPacketReceivedInternal(PacketType packetType, params object[] args)
+        {
+            if (IsArgsCountCorrect(packetType, args.Length))
+            {
+                OnPacketReceived(packetType, args);
+                return;
+            }
+#if DEBUG
+            Logger.Warn($"Peer 'id: {CustomMultiplayer.GetRpcSenderId()}' sent 'packetType: {packetType}' with wrong number of arguments ({args.Length})");
+#endif
+        }
         protected abstract void OnPacketReceived(PacketType packetType, params object[] args);
         protected abstract string GetCertificateName();
         protected abstract void ConnectSignals();
+        protected abstract int GetPort();
+        protected abstract void Create();
     }
 }
