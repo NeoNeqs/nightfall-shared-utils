@@ -1,6 +1,6 @@
 using SharedUtils.Common;
 
-namespace SharedUtils.Services.Validators
+namespace SharedUtils.Validation
 {
     public interface IValidatable<T>
     {

@@ -1,13 +1,7 @@
-using Godot;
-
-namespace SharedUtils.Configurations
+namespace SharedUtils.Configuration
 {
-    public abstract class StandartConfiguration<T> : Configuration<T> where T : Node
+    public class StandartConfiguration : Configuration
     {
-        protected StandartConfiguration() : base()
-        {
-        }
-
         public int GetPort(int defaultPort)
         {
             return GetValue("NETWORKING", "port", defaultPort);

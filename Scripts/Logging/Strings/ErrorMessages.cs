@@ -1,4 +1,4 @@
-﻿namespace SharedUtils.Common
+﻿namespace SharedUtils.Logging.Strings
 {
     public static class ErrorMessages
     {

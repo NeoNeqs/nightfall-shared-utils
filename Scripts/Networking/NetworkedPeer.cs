@@ -1,22 +1,25 @@
 using Godot;
 
-using GatewayServer.AutoLoad;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 using SharedUtils.Common;
-using SharedUtils.Exceptions;
+using SharedUtils.Exception;
 using SharedUtils.Loaders;
-using SharedUtils.Networking;
-using SharedUtils.Services.Validators;
-
-using ConnectionStatus = Godot.NetworkedMultiplayerPeer.ConnectionStatus;
 using SharedUtils.Logging;
+using SharedUtils.Validation;
 
-namespace SharedUtils.Services
+using static SharedUtils.Factory.SharedSingletonFactory;
+
+using DirectoryNotFoundException = SharedUtils.Exception.DirectoryNotFoundException;
+using ConnectionStatus = Godot.NetworkedMultiplayerPeer.ConnectionStatus;
+
+namespace SharedUtils.Networking
 {
     /// <summary>
     ///     A base class for network connections.
     /// </summary>
-    public abstract class NetworkedPeer<T> : GodotSingleton<T> where T : Node
+    public abstract class NetworkedPeer : Node
     {
         protected NetworkedMultiplayerENet _peer;
 
@@ -31,7 +34,7 @@ namespace SharedUtils.Services
 
         public override void _EnterTree()
         {
-            maxAttempts = ClientConfiguration.Singleton.GetMaxAttempts(GlobalDefines.MaxAttemptsDefault);
+            maxAttempts = StandartConfigurationInstance.GetMaxAttempts(SharedGlobalDefinesInstance.MaxAttemptsDefault);
 
             CreateInternal();
         }
@@ -119,50 +122,23 @@ namespace SharedUtils.Services
         }
 
         [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1)
+        protected void PacketReceived(PacketType packetType, byte[] bytes)
         {
-            OnPacketReceivedInternal(packetType, arg1);
+            object @object = BinaryTools.Deserialize(bytes);
+
+            OnPacketReceived(packetType, @object);
         }
 
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2)
+        protected void Send(int peerId, object @object)
         {
-            OnPacketReceivedInternal(packetType, arg1, arg2);
+            _ = RpcId(peerId, nameof(PacketReceived), BinaryTools.Serialize(@object));
         }
 
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3)
-        {
-            OnPacketReceivedInternal(packetType, arg1, arg2, arg3);
-        }
-
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4)
-        {
-            OnPacketReceivedInternal(packetType, arg1, arg2, arg3, arg4);
-        }
-
-        [Remote]
-        protected void PacketReceived(PacketType packetType, object arg1, object arg2, object arg3, object arg4, object arg5)
-        {
-            OnPacketReceivedInternal(packetType, arg1, arg2, arg3, arg4, arg5);
-        }
-
-        private void OnPacketReceivedInternal(PacketType packetType, params object[] args)
-        {
-            if (IsArgsCountCorrect(packetType, args.Length))
-            {
-                OnPacketReceived(packetType, args);
-                return;
-            }
-#if DEBUG
-            Logger.Warn($"Peer 'id: {CustomMultiplayer.GetRpcSenderId()}' sent 'packetType: {packetType}' with wrong number of arguments ({args.Length})");
-#endif
-        }
-        protected abstract void OnPacketReceived(PacketType packetType, params object[] args);
+        protected abstract void OnPacketReceived(PacketType packetType, object @object);
         protected abstract string GetCertificateName();
         protected abstract void ConnectSignals();
         protected abstract int GetPort();
+        protected abstract int GetMaxClients();
         protected abstract void Create();
     }
 }

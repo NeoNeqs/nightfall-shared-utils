@@ -85,5 +85,68 @@ namespace SharedUtils.Common
         {
             return errorCode != Ok;
         }
+
+        public override string ToString()
+        {
+            return InternalValue switch
+            {
+                Ok => nameof(Ok),
+                Failed => nameof(Failed),
+                Unavailable => nameof(Unavailable),
+                Unconfigured => nameof(Unconfigured),
+                Unauthorized => nameof(Unauthorized),
+                ParameterRangeError => nameof(ParameterRangeError),
+                OutOfMemory => nameof(OutOfMemory),
+                FileNotFound => nameof(FileNotFound),
+                FileBadDrive => nameof(FileBadDrive),
+                FileBadPath => nameof(FileBadPath),
+                FileNoPermission => nameof(FileNoPermission),
+                FileAlreadyInUse => nameof(FileAlreadyInUse),
+                FileCantOpen => nameof(FileCantOpen),
+                FileCantWrite => nameof(FileCantWrite),
+                FileCantRead => nameof(FileCantRead),
+                FileUnrecognized => nameof(FileUnrecognized),
+                FileCorrupt => nameof(FileCorrupt),
+                FileMissingDependencies => nameof(FileMissingDependencies),
+                FileEof => nameof(FileEof),
+                CantOpen => nameof(CantOpen),
+                CantCreate => nameof(CantCreate),
+                QueryFailed => nameof(QueryFailed),
+                AlreadyInUse => nameof(AlreadyInUse),
+                Locked => nameof(Locked),
+                Timeout => nameof(Timeout),
+                CantConnect => nameof(CantConnect),
+                CantResolve => nameof(CantResolve),
+                ConnectionError => nameof(ConnectionError),
+                CantAcquireResource => nameof(CantAcquireResource),
+                CantFork => nameof(CantFork),
+                InvalidData => nameof(InvalidData),
+                InvalidParameter => nameof(InvalidParameter),
+                AlreadyExists => nameof(AlreadyExists),
+                DoesNotExist => nameof(DoesNotExist),
+                DatabaseCantRead => nameof(DatabaseCantRead),
+                DatabaseCantWrite => nameof(DatabaseCantWrite),
+                CompilationFailed => nameof(CompilationFailed),
+                MethodNotFound => nameof(MethodNotFound),
+                LinkFailed => nameof(LinkFailed),
+                ScriptFailed => nameof(ScriptFailed),
+                CyclicLink => nameof(CyclicLink),
+                InvalidDeclaration => nameof(InvalidDeclaration),
+                DuplicateSymbol => nameof(DuplicateSymbol),
+                ParseError => nameof(ParseError),
+                Busy => nameof(Busy),
+                Skip => nameof(Skip),
+                Help => nameof(Help),
+                Bug => nameof(Bug),
+                PrinterOnFire => nameof(PrinterOnFire),
+                CantSave => nameof(CantSave),
+                EnvironmentVariableNotSet => nameof(EnvironmentVariableNotSet),
+                DirBadPath => nameof(DirBadPath),
+                DataTooLong => nameof(DataTooLong),
+                MissingAttribute => nameof(MissingAttribute),
+                NotValid => nameof(NotValid),
+                _ => string.Empty,
+            };
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Godot;
-using SharedUtils.Exceptions;
+
+using SharedUtils.Exception;
 
 namespace SharedUtils.Common
 {

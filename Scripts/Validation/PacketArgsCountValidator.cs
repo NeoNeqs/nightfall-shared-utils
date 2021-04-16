@@ -1,7 +1,7 @@
 ﻿using SharedUtils.Common;
 using SharedUtils.Networking;
 
-namespace SharedUtils.Services.Validators
+namespace SharedUtils.Validation
 {
     public class PacketArgsCountValidator : IValidatableDouble<PacketType, int>
     {

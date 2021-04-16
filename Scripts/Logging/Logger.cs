@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Godot;
+using Godot.Collections;
+
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-
-using Godot;
-using Godot.Collections;
 
 using SharedUtils.Common;
 
@@ -14,7 +13,6 @@ namespace SharedUtils.Logging
     public sealed class Logger
     {
         private static Logger Instance { get; } = new Logger();
-
         private static Buffer buffer;
         public static string Path { get; set; }
         public static Level CurrentLevel { get; set; }
@@ -30,6 +28,7 @@ namespace SharedUtils.Logging
                 DirectoryUtils.MakeDirRecursive(path);
             }
 
+            // TODO: add this to config.
             buffer = new Buffer(100);
 
             CurrentLevel = Level.Debug;
@@ -56,7 +55,7 @@ namespace SharedUtils.Logging
             Store(Level.Error, message);
         }
 
-        public static void Error(Exception e)
+        public static void Error(System.Exception e)
         {
             Error(e.Message);
             Error(e.StackTrace);

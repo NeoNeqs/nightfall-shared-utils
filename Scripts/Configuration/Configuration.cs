@@ -1,10 +1,11 @@
 using Godot;
 
 using SharedUtils.Common;
+using SharedUtils.Logging;
 
-namespace SharedUtils.Configurations
+namespace SharedUtils.Configuration
 {
-    public abstract class Configuration<T> : GodotSingleton<T> where T : Node
+    public abstract class Configuration : Node
     {
         private readonly ConfigFile _configFile;
         private readonly string path = "user://config/config.ini";
@@ -12,20 +13,28 @@ namespace SharedUtils.Configurations
         protected string Path { set; get; }
         private bool _isLoaded;
 
-
         protected Configuration()
         {
             _configFile = new ConfigFile();
         }
 
-        protected ErrorCode LoadConfiguration()
+        public override void _EnterTree()
+        {
+            ErrorCode errorCode = LoadConfiguration();
+            if (!errorCode)
+            {
+                Logger.Error($"Could not load configuration file '{Path}'. Error code: '{errorCode}'");
+            }
+        }
+
+        private ErrorCode LoadConfiguration()
         {
             DirectoryUtils.MakeDirRecursive(path);
             FileUtils.CreateFileIfNotExists(path);
 
             Error error = _configFile.Load(path);
             _isLoaded = error == Error.Ok;
-            return (ErrorCode)(int)error;
+            return (int)error;
         }
 
         protected V GetValue<V>(string section, string key, V @default)
@@ -33,7 +42,7 @@ namespace SharedUtils.Configurations
             return !_isLoaded ? @default : (V)_configFile.GetValue(section, key, @default);
         }
 
-        protected void SetValue<R>(string section, string key, R value)
+        protected void SetValue<V>(string section, string key, V value)
         {
             if (!_isLoaded)
             {
@@ -43,7 +52,7 @@ namespace SharedUtils.Configurations
             _configFile.SetValue(section, key, value);
         }
 
-        protected ErrorCode SaveConfiguration()
+        private ErrorCode SaveConfiguration()
         {
             if (!_isLoaded)
             {
@@ -52,7 +61,16 @@ namespace SharedUtils.Configurations
 
             Error error = _configFile.Save(path);
             _isLoaded = false;
-            return (ErrorCode)(int)error;
+            return (int)error;
+        }
+
+        public override void _ExitTree()
+        {
+            ErrorCode errorCode = SaveConfiguration();
+            if (!errorCode)
+            {
+                Logger.Error($"Could not save configuration file '{Path}'. Error code: '{errorCode}'");
+            }
         }
     }
 }
