@@ -2,7 +2,7 @@ using Godot;
 
 namespace SharedUtils.Common
 {
-    public sealed class FileUtils
+    public static class FileUtils
     {
         public static void CreateFileIfNotExists(string pathToFile)
         {

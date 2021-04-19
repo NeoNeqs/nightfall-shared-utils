@@ -1,24 +1,23 @@
 ﻿using Godot;
 using Godot.Collections;
-
+using SharedUtils.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-
-using SharedUtils.Common;
 
 namespace SharedUtils.Logging
 {
     public sealed class Logger
     {
         private static Logger Instance { get; } = new Logger();
+
         private static Buffer buffer;
         public static string Path { get; set; }
         public static Level CurrentLevel { get; set; }
 
         static Logger() { }
-        private Logger() 
+        private Logger()
         {
             string path = "user://logs/";
             Path = ProjectSettings.GlobalizePath(path);
@@ -74,7 +73,7 @@ namespace SharedUtils.Logging
             GD.Print(line);
 #endif
             buffer.Store(line);
-            
+
         }
 
         private static string ConstructFileName()

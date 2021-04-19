@@ -5,7 +5,7 @@ using SharedUtils.Logging;
 
 namespace SharedUtils.Configuration
 {
-    public abstract class Configuration : Node
+    public abstract class Configuration<T> : GodotSingleton<T> where T : Node
     {
         private readonly ConfigFile _configFile;
         private readonly string path = "user://config/config.ini";

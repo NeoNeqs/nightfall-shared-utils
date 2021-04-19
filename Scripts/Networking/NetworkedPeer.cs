@@ -1,41 +1,33 @@
 using Godot;
-
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-
 using SharedUtils.Common;
 using SharedUtils.Exception;
 using SharedUtils.Loaders;
 using SharedUtils.Logging;
 using SharedUtils.Validation;
-
-using static SharedUtils.Factory.SharedSingletonFactory;
-
-using DirectoryNotFoundException = SharedUtils.Exception.DirectoryNotFoundException;
 using ConnectionStatus = Godot.NetworkedMultiplayerPeer.ConnectionStatus;
+using DirectoryNotFoundException = SharedUtils.Exception.DirectoryNotFoundException;
 
 namespace SharedUtils.Networking
 {
     /// <summary>
     ///     A base class for network connections.
     /// </summary>
-    public abstract class NetworkedPeer : Node
+    public abstract class NetworkedPeer<T> : GodotSingleton<T> where T : Node
     {
         protected NetworkedMultiplayerENet _peer;
 
         private int attempts;
 
-        private int maxAttempts;
+        private readonly int maxAttempts;
 
         public NetworkedPeer()
         {
             attempts = 0;
+            maxAttempts = MaxAttempts();
         }
 
         public override void _EnterTree()
         {
-            maxAttempts = StandartConfigurationInstance.GetMaxAttempts(SharedGlobalDefinesInstance.MaxAttemptsDefault);
-
             CreateInternal();
         }
 
@@ -115,26 +107,23 @@ namespace SharedUtils.Networking
             return _peer.GetConnectionStatus();
         }
 
-        protected bool IsArgsCountCorrect(PacketType packetType, int length)
+        private bool IsArgsCountCorrect(Packet packet, int length)
         {
             PacketArgsCountValidator packetArgsCountValidator = new PacketArgsCountValidator();
-            return packetArgsCountValidator.Validate(packetType, length) == ErrorCode.Ok;
+            return packetArgsCountValidator.Validate(packet, length) == ErrorCode.Ok;
         }
 
         [Remote]
-        protected void PacketReceived(PacketType packetType, byte[] bytes)
+        protected void PacketReceived(Packet packet, object[] args)
         {
-            object @object = BinaryTools.Deserialize(bytes);
-
-            OnPacketReceived(packetType, @object);
+            if (IsArgsCountCorrect(packet, args.Length))
+            {
+                OnPacketReceived(packet, args);
+            }
         }
 
-        protected void Send(int peerId, object @object)
-        {
-            _ = RpcId(peerId, nameof(PacketReceived), BinaryTools.Serialize(@object));
-        }
-
-        protected abstract void OnPacketReceived(PacketType packetType, object @object);
+        protected abstract void OnPacketReceived(Packet packetType, object[] args);
+        protected abstract int MaxAttempts();
         protected abstract string GetCertificateName();
         protected abstract void ConnectSignals();
         protected abstract int GetPort();

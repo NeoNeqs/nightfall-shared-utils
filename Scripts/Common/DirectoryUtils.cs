@@ -2,7 +2,7 @@ using Godot;
 
 namespace SharedUtils.Common
 {
-    public sealed class DirectoryUtils
+    public static class DirectoryUtils
     {
         public static bool DirExists(string path)
         {
