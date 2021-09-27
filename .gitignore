@@ -1,0 +1,9 @@
+.godot/
+.idea/
+
+bin/
+
+tests/bin/
+tests/obj/
+
+*.import
