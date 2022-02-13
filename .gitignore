@@ -1,6 +1,5 @@
 .godot/
-.idea/
-
+.vs/
 bin/
 
 tests/bin/
